@@ -1,0 +1,7 @@
+{
+    "name": "mr_tavily_search",
+    "version": "0.1.0",
+    "description": "Tavily search integration for Agent H",
+    "author": "runvnc",
+    "entry_point": "mr_tavily_search.mod"
+}
