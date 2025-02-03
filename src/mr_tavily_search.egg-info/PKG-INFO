@@ -1,0 +1,8 @@
+Metadata-Version: 2.2
+Name: mr_tavily_search
+Version: 0.1.0
+Summary: Tavily search integration for Agent H
+Author: runvnc
+Requires-Python: >=3.9
+Requires-Dist: tavily-python
+Requires-Dist: trafilatura
