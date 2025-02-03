@@ -1,8 +1,0 @@
-pyproject.toml
-src/mr_tavily_search/__init__.py
-src/mr_tavily_search/mod.py
-src/mr_tavily_search.egg-info/PKG-INFO
-src/mr_tavily_search.egg-info/SOURCES.txt
-src/mr_tavily_search.egg-info/dependency_links.txt
-src/mr_tavily_search.egg-info/requires.txt
-src/mr_tavily_search.egg-info/top_level.txt
