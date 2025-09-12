@@ -37,7 +37,6 @@ async def web_search(query, num_results=5):
         results = tool_results.content
         print(results)
         print("returning ok")
-        sys.exit(0)
         return results
         #results = response.get('results', [])[:num_results]
         #return [{'title': r['title'], 
@@ -47,7 +46,6 @@ async def web_search(query, num_results=5):
         trace = traceback.format_exc()
         print(f"Error in web search: {str(e)} \n\n{trace}")
         print("error occurred, returning empty list")
-        sys.exit(0)
         return []
 
 def fetch_and_extract(url):
