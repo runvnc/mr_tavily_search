@@ -5,6 +5,7 @@ from tavily import TavilyClient
 from lib.providers.services import service
 from lib.providers.commands import command
 import trafilatura
+import nanoid
 
 tavily_client = TavilyClient(api_key=os.environ.get('TAVILY_API_KEY'))
 
@@ -21,10 +22,25 @@ async def web_search(query, num_results=5):
     """
     try:
         response = tavily_client.search(query)
-        results = response.get('results', [])[:num_results]
-        return [{'title': r['title'], 
-                'link': r['url'], 
-                'snippet': r['content']} for r in results]
+        from langchain_tavily import TavilySearch
+
+    tool = TavilySearch(
+        max_results=num_results,
+        search_depth="advanced",
+        #include_answer=True,
+        #include_raw_content=True,
+        include_images=True,
+        include_image_descriptions=True
+        #response_format="content_and_artifact"
+    )
+    id = nanoid.generate()
+    tool_results = tool.run(tool_input = {"query": query}, tool_call_id = id)
+    results = tool_results.content
+        return results
+        #results = response.get('results', [])[:num_results]
+        #return [{'title': r['title'], 
+        #        'link': r['url'], 
+        #        'snippet': r['content']} for r in results]
     except Exception as e:
         print(f"Error in web search: {str(e)}")
         return []
