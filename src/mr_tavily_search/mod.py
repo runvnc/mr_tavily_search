@@ -88,17 +88,18 @@ async def search_web(query, num_results=15, fetch_first=False, context=None):
         search_results = await web_search(query, num_results)
         if not search_results:
             return "No results found. Please check your search query."
+
+        return search_results        
+        #formatted_results = []
+        #for result in search_results:
+        #    formatted_result = f"Title: {result['title']}\nLink: {result['link']}\nDescription: {result['snippet']}"
+        #    if fetch_first and len(formatted_results) == 0:
+        #        content = fetch_and_extract(result['link'])
+        #        if content:
+        #            formatted_result += f"\n\nExtracted Full Content:\n{content[:500]}..."
+        #    formatted_results.append(formatted_result)
         
-        formatted_results = []
-        for result in search_results:
-            formatted_result = f"Title: {result['title']}\nLink: {result['link']}\nDescription: {result['snippet']}"
-            if fetch_first and len(formatted_results) == 0:
-                content = fetch_and_extract(result['link'])
-                if content:
-                    formatted_result += f"\n\nExtracted Full Content:\n{content[:500]}..."
-            formatted_results.append(formatted_result)
-        
-        return "\n\n".join(formatted_results)
+        #return "\n\n".join(formatted_results)
     except Exception as e:
         return f"Error performing web search: {str(e)}"
 
