@@ -7,7 +7,7 @@ from lib.providers.commands import command
 import trafilatura
 import nanoid
 from langchain_tavily import TavilySearch
-
+import traceback
 
 @service()
 async def web_search(query, num_results=5):
@@ -40,7 +40,8 @@ async def web_search(query, num_results=5):
         #        'link': r['url'], 
         #        'snippet': r['content']} for r in results]
     except Exception as e:
-        print(f"Error in web search: {str(e)}")
+        trace = traceback.format_exc()
+        print(f"Error in web search: {str(e)} \n\n{trace}")
         return []
 
 def fetch_and_extract(url):
