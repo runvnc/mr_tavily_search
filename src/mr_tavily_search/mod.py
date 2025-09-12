@@ -8,6 +8,7 @@ import trafilatura
 import nanoid
 from langchain_tavily import TavilySearch
 import traceback
+import sys
 
 @service()
 async def web_search(query, num_results=5):
@@ -34,6 +35,9 @@ async def web_search(query, num_results=5):
         id = nanoid.generate()
         tool_results = tool.run(tool_input = {"query": query}, tool_call_id = id)
         results = tool_results.content
+        print(results)
+        print("returning ok")
+        sys.exit(0)
         return results
         #results = response.get('results', [])[:num_results]
         #return [{'title': r['title'], 
@@ -42,6 +46,8 @@ async def web_search(query, num_results=5):
     except Exception as e:
         trace = traceback.format_exc()
         print(f"Error in web search: {str(e)} \n\n{trace}")
+        print("error occurred, returning empty list")
+        sys.exit(0)
         return []
 
 def fetch_and_extract(url):
