@@ -11,7 +11,7 @@ import traceback
 import sys
 
 @service()
-async def web_search(query, num_results=5):
+async def web_search(query, num_results=5, search_depth="basic", include_images=False):
     """Perform a web search using Tavily API.
 
     Args:
@@ -23,17 +23,23 @@ async def web_search(query, num_results=5):
     """
     try:
 
+        include_image_descriptions = False
+        if include_images:
+            include_image_descriptions = True
+        
         tool = TavilySearch(
             max_results=num_results,
-            search_depth="advanced",
+            search_depth=search_depth,
             #include_answer=True,
             #include_raw_content=True,
-            include_images=True,
-            include_image_descriptions=True
+            include_images=include_images,
+            include_image_descriptions=include_image_descriptions
             #response_format="content_and_artifact"
         )
         id = nanoid.generate()
-        tool_results = tool.run(tool_input = {"query": query}, tool_call_id = id)
+        #tool_results = tool.run(tool_input = {"query": query}, tool_call_id = id)
+        tool_results = await tool.arun(tool_input = {"query": query}, tool_call_id = id)
+ 
         results = tool_results.content
         print(results)
         print("returning ok")
@@ -65,13 +71,15 @@ def fetch_and_extract(url):
     return content
 
 @command()
-async def search_web(query, num_results=15, fetch_first=False, context=None):
+async def search_web(query, num_results=15, fetch_first=False, search_depth="basic", include_images=False, context=None):
     """Perform a web search and return the results.
 
     Args:
         query (str): The search query.
         num_results (int, optional): The number of results to return. Defaults to 15.
         fetch_first (bool, optional): Whether to fetch the content of the first result. Defaults to False.
+        search_depth: (str, optional): 'basic' (faster) or 'advanced' (deeper)
+        include_images: (bool, optional): defaults to False, may be faster to omit unless needed
         context (object, optional): The context object for the current session.
 
     Returns:
@@ -83,7 +91,7 @@ async def search_web(query, num_results=15, fetch_first=False, context=None):
         ]
     """
     try:
-        search_results = await web_search(query, num_results)
+        search_results = await web_search(query, num_results, search_depth=search_depth, include_images=include_images)
         if not search_results:
             return "No results found. Please check your search query."
 
