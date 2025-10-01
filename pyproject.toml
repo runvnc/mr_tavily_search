@@ -13,5 +13,6 @@ requires-python = ">=3.9"
 dependencies = [
     "langchain-tavily",
     "lxml_html_clean",
-    "trafilatura"
+    "trafilatura",
+    "tavily-python"
 ]
