@@ -1,7 +1,7 @@
 print("Loading mod.py for Tavily Search")
 
 import os
-from tavily import TavilyClient
+#from tavily import TavilyClient
 from lib.providers.services import service
 from lib.providers.commands import command
 import trafilatura
