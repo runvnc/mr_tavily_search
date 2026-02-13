@@ -1,10 +1,8 @@
 print("Loading mod.py for Tavily Search")
 
 import os
-#from tavily import TavilyClient
 from lib.providers.services import service
 from lib.providers.commands import command
-import trafilatura
 import nanoid
 from langchain_tavily import TavilySearch
 import traceback
@@ -30,49 +28,28 @@ async def web_search(query, num_results=5, search_depth="basic", include_images=
         tool = TavilySearch(
             max_results=num_results,
             search_depth=search_depth,
-            #include_answer=True,
-            #include_raw_content=True,
             include_images=include_images,
             include_image_descriptions=include_image_descriptions
-            #response_format="content_and_artifact"
         )
         id = nanoid.generate()
-        #tool_results = tool.run(tool_input = {"query": query}, tool_call_id = id)
         tool_results = await tool.arun(tool_input = {"query": query}, tool_call_id = id)
  
         results = tool_results.content
         print(results)
         print("returning ok")
         return results
-        #results = response.get('results', [])[:num_results]
-        #return [{'title': r['title'], 
-        #        'link': r['url'], 
-        #        'snippet': r['content']} for r in results]
     except Exception as e:
         trace = traceback.format_exc()
         print(f"Error in web search: {str(e)} \n\n{trace}")
         print("error occurred, returning empty list")
         return []
 
-def fetch_and_extract(url):
-    """Fetch and extract the main content from a given URL using trafilatura.
-
-    Args:
-        url (str): The URL to fetch and extract content from.
-
-    Returns:
-        str: The extracted main content of the webpage, or None if extraction fails.
-    """
-    downloaded = trafilatura.fetch_url(url)
-    if downloaded is None:
-        return None
-    content = trafilatura.extract(downloaded, include_comments=False, 
-                                include_tables=True, no_fallback=False)
-    return content
-
 @command()
 async def search_web(query, num_results=15, fetch_first=False, search_depth="basic", include_images=False, context=None):
     """Perform a web search and return the results.
+
+    Note: For webpage content extraction, use mr_crawl4ai plugin's fetch_webpage 
+    or crawl_site commands instead of this plugin's fetch functionality.
 
     Args:
         query (str): The search query.
@@ -83,11 +60,11 @@ async def search_web(query, num_results=15, fetch_first=False, search_depth="bas
         context (object, optional): The context object for the current session.
 
     Returns:
-        str: Formatted string containing search results and optionally the content of the first result.
+        str: Formatted string containing search results.
 
     Example:
         [
-            { "search_web": { "query": "Python programming", "num_results": 3, "fetch_first": true } }
+            { "search_web": { "query": "Python programming", "num_results": 3 } }
         ]
     """
     try:
@@ -96,46 +73,15 @@ async def search_web(query, num_results=15, fetch_first=False, search_depth="bas
             return "No results found. Please check your search query."
 
         return search_results        
-        #formatted_results = []
-        #for result in search_results:
-        #    formatted_result = f"Title: {result['title']}\nLink: {result['link']}\nDescription: {result['snippet']}"
-        #    if fetch_first and len(formatted_results) == 0:
-        #        content = fetch_and_extract(result['link'])
-        #        if content:
-        #            formatted_result += f"\n\nExtracted Full Content:\n{content[:500]}..."
-        #    formatted_results.append(formatted_result)
-        
-        #return "\n\n".join(formatted_results)
     except Exception as e:
         return f"Error performing web search: {str(e)}"
-
-@command()
-async def fetch_webpage(url, context=None):
-    """Fetch and extract the main content from a given URL.
-
-    Args:
-        url (str): The URL to fetch and extract content from.
-        context (object, optional): The context object for the current session.
-
-    Returns:
-        str: The extracted main content of the webpage, or an error message if extraction fails.
-
-    Example:
-        [
-            { "fetch_webpage": { "url": "https://www.example.com/article" } }
-        ]
-    """
-    content = fetch_and_extract(url)
-    if content is None:
-        return f"Failed to fetch or extract content from {url}"
-    return f"Extracted content from {url}:\n\n{content}"
 
 if __name__ == "__main__":
     # This block is for testing purposes
     import asyncio
     
     async def test_search():
-        results = await search_web("Python programming", num_results=5, fetch_first=True)
+        results = await search_web("Python programming", num_results=5)
         print(results)
     
     asyncio.run(test_search())
